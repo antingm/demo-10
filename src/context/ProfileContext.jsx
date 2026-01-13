@@ -107,81 +107,91 @@ export const ProfileProvider = ({ children }) => {
 
     /**
      * 載入 Demo 展示資料（前台公開頁面用）
+     * 直接使用本地資料，不連線 Firestore
      */
-    const loadDemoProfile = async () => {
-        try {
-            // 嘗試載入站點設定中的 demo 資料
-            const demoRef = doc(db, 'settings', 'demo');
-            const demoSnap = await getDoc(demoRef);
-
-            if (demoSnap.exists()) {
-                setProfile({ ...defaultProfile, ...demoSnap.data() });
-            } else {
-                // 使用內建的展示資料
-                setProfile({
-                    ...defaultProfile,
-                    name: '王小明',
-                    title: '專業攝影師 | 品牌顧問',
-                    bio: '用影像說故事，讓品牌被看見',
-                    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face',
-                    socials: [
-                        { platform: 'line', url: 'https://line.me/ti/p/~demo', enabled: true },
-                        { platform: 'instagram', url: 'https://instagram.com/demo', enabled: true },
-                        { platform: 'facebook', url: 'https://facebook.com/demo', enabled: true },
-                    ],
-                    links: [
-                        {
-                            id: 'link-1',
-                            icon: '📞',
-                            title: '預約諮詢',
-                            description: '立即預約免費拍攝諮詢',
-                            url: 'https://calendly.com/demo',
-                            enabled: true,
-                            order: 0
-                        },
-                        {
-                            id: 'link-2',
-                            icon: '🛒',
-                            title: '作品集',
-                            description: '瀏覽我的攝影作品',
-                            url: 'https://behance.net/demo',
-                            enabled: true,
-                            order: 1
-                        },
-                        {
-                            id: 'link-3',
-                            icon: '📍',
-                            title: '工作室位置',
-                            description: '台北市信義區',
-                            url: 'https://maps.google.com',
-                            enabled: true,
-                            order: 2
-                        },
-                        {
-                            id: 'link-4',
-                            icon: '💼',
-                            title: '品牌顧問服務',
-                            description: '一對一品牌策略諮詢',
-                            url: 'https://example.com',
-                            enabled: true,
-                            order: 3
-                        },
-                    ],
-                    contact: {
-                        phone: '0912-345-678',
-                        email: 'hello@example.com',
-                        address: '台北市信義區信義路五段7號',
-                        showPhone: true,
-                        showEmail: true,
-                        showAddress: true
-                    }
-                });
+    const loadDemoProfile = () => {
+        // 直接使用內建的展示資料（不需要 Firebase）
+        setProfile({
+            ...defaultProfile,
+            name: '小美好物',
+            title: '精選好物 | 品質生活',
+            bio: '每週精選全球好物，讓生活更有質感 ✨',
+            avatarUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=300&fit=crop&crop=center',
+            socials: [
+                { platform: 'line', url: 'https://line.me/ti/p/~demo', enabled: true },
+                { platform: 'instagram', url: 'https://instagram.com/demo', enabled: true },
+                { platform: 'facebook', url: 'https://facebook.com/demo', enabled: true },
+            ],
+            // 商品列表（新增）
+            products: [
+                {
+                    id: 'prod-1',
+                    name: '手工陶瓷咖啡杯',
+                    price: 580,
+                    originalPrice: 780,
+                    image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=400&fit=crop',
+                    tag: 'hot',
+                    url: 'https://shopee.tw/demo',
+                    enabled: true
+                },
+                {
+                    id: 'prod-2',
+                    name: '北歐風格香氛蠟燭',
+                    price: 420,
+                    image: 'https://images.unsplash.com/photo-1602607700908-0014ffb1da15?w=400&h=400&fit=crop',
+                    tag: 'new',
+                    url: 'https://shopee.tw/demo',
+                    enabled: true
+                },
+                {
+                    id: 'prod-3',
+                    name: '天然亞麻餐墊組',
+                    price: 350,
+                    originalPrice: 450,
+                    image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=400&h=400&fit=crop',
+                    tag: 'sale',
+                    url: 'https://shopee.tw/demo',
+                    enabled: true
+                },
+                {
+                    id: 'prod-4',
+                    name: '日式簡約花瓶',
+                    price: 680,
+                    image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=400&h=400&fit=crop',
+                    url: 'https://shopee.tw/demo',
+                    enabled: true
+                },
+            ],
+            links: [
+                {
+                    id: 'link-1',
+                    icon: '🛒',
+                    title: '官方商城',
+                    description: '全館商品 85 折起',
+                    url: 'https://shopee.tw/demo',
+                    enabled: true,
+                    order: 0
+                },
+                {
+                    id: 'link-2',
+                    icon: '💬',
+                    title: 'LINE 客服諮詢',
+                    description: '專人為您服務',
+                    url: 'https://line.me/ti/p/~demo',
+                    enabled: true,
+                    order: 1
+                },
+            ],
+            contact: {
+                phone: '0800-123-456',
+                email: 'service@demo-shop.com',
+                address: '台北市信義區信義路五段7號',
+                showPhone: true,
+                showEmail: true,
+                showAddress: false
             }
-        } catch (error) {
-            console.error('載入 Demo 資料失敗：', error);
-        } finally {
-            setLoading(false);
-        }
+        });
+        setLoading(false);
     };
 
     /**
